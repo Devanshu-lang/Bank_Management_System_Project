@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+database.json
+database.tmp
+legacy_bank.log
+.streamlit/secrets.toml
+.venv/
+venv/
