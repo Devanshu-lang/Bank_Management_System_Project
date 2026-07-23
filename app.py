@@ -1225,9 +1225,9 @@ def render_sidebar_authenticated() -> None:
     st.sidebar.markdown(f'<div class="lb-side-tagline">{BRAND_TAGLINE}</div>', unsafe_allow_html=True)
     st.sidebar.divider()
 
-    st.sidebar.markdown(f"👤 **Holder:** {account.get('name')}")
-    st.sidebar.caption(f"🆔 Account: {account.get('account_no')}")
-    st.sidebar.caption(f"💰 Balance: Rs {account.get('balance', 0):,.2f}")
+    st.sidebar.markdown(f"**Holder:** {account.get('name')}")
+    st.sidebar.caption(f"Account: {account.get('account_no')}")
+    st.sidebar.caption(f"Balance: Rs {account.get('balance', 0):,.2f}")
 
     if st.sidebar.button("Sign Out", use_container_width=True):
         st.session_state.active_account = None
