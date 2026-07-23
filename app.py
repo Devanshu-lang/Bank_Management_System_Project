@@ -87,18 +87,34 @@ logger = logging.getLogger("legacy_bank")
 _STORAGE_LOCK = threading.Lock()
 
 
+_REQUIRED_ACCOUNT_KEYS = ("account_no", "pin_hash", "pin_salt")
+
+
 def load_accounts() -> list[dict[str, Any]]:
-    """Load all account records from disk. Never raises."""
+    """Load all account records from disk. Never raises.
+
+    Records missing required keys (e.g. left over from an older schema, or a
+    hand-edited database.json) are dropped with a warning rather than being
+    allowed to crash every page that assumes a well-formed account.
+    """
     with _STORAGE_LOCK:
         if not DATABASE_FILE.exists():
             return []
         try:
             with open(DATABASE_FILE, "r", encoding="utf-8") as fh:
                 content = fh.read().strip()
-                return json.loads(content) if content else []
+                raw_accounts = json.loads(content) if content else []
         except (json.JSONDecodeError, OSError) as err:
             logger.error("Failed to load database: %s", err)
             return []
+
+    valid_accounts = []
+    for acc in raw_accounts:
+        if isinstance(acc, dict) and all(acc.get(key) for key in _REQUIRED_ACCOUNT_KEYS):
+            valid_accounts.append(acc)
+        else:
+            logger.warning("Skipping malformed account record: %s", acc.get("account_no", "<no account_no>"))
+    return valid_accounts
 
 
 def save_accounts(accounts: list[dict[str, Any]]) -> bool:
@@ -215,7 +231,7 @@ def _now() -> str:
 
 def _generate_account_number(existing_accounts: list[dict[str, Any]]) -> str:
     """4 uppercase letters + 8 digits, guaranteed unique against current data."""
-    existing = {acc["account_no"] for acc in existing_accounts}
+    existing = {acc["account_no"] for acc in existing_accounts if acc.get("account_no")}
     for _ in range(1000):
         candidate = "".join(random.choices(string.ascii_uppercase, k=ACCOUNT_PREFIX_LEN)) + "".join(
             random.choices(string.digits, k=ACCOUNT_SUFFIX_LEN)
