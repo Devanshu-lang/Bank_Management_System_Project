@@ -105,50 +105,79 @@ class Bank:
                     print(f"{i} : {user[0][i]}")
         else:
             print("Invalid Account no. or pin")
-    def update_details():
+
+    # FIX 1: added `self` — this is called as bank.update_details(), so Python
+    # passes the instance automatically. Without `self` here, that call would
+    # raise "takes 0 positional arguments but 1 was given".
+    def update_details(self):
         acc_no = input("Tell your account number :- ")
         pin = int(input("Tell your pin :- "))
         user = [i for i in Bank.data if i["pin"] == pin and i["accountno."] == acc_no]
 
-        if user == False:
+        # FIX 2: `user == False` never worked — a list is never equal to the
+        # boolean False, so this branch could never trigger. Use `not user`
+        # to correctly detect an empty (no-match) list.
+        if not user:
             print("Invalid number or pin ")
         else:
             newdata = {
-                "name" : input("Enter to Skip or type your new name: "),
+                "name": input("Enter to Skip or type your new name: "),
                 "mail": input("Enter to Skip or type your new mail: "),
-                "number" : input(("Enter to Skip or type your new number: ")),
-                "pin" : input("Enter to Skip or type your new pin: "),
+                "number": input("Enter to Skip or type your new number: "),
+                "pin": input("Enter to Skip or type your new pin: "),
             }
+
+            # FIX 3: these were `==` (comparison) instead of `=` (assignment),
+            # so "leave blank to keep the old value" never actually happened.
             if newdata["name"] == "":
-                newdata['name'] == user[0]['name']
+                newdata["name"] = user[0]["name"]
             if newdata["mail"] == "":
-                newdata['mail'] == user[0]['mail']
+                newdata["mail"] = user[0]["mail"]
             if newdata["number"] == "":
-                newdata['number'] == str(user[0]['number'])
+                newdata["number"] = str(user[0]["number"])
             if newdata["pin"] == "":
-                newdata['pin'] == str(user[0]['pin'])
-            newdata ['pin'] = int(newdata['pin'])
-            newdata ['number'] = int(newdata['number'])
-        for i in user[0]:
-            if i in newdata:
-                user[0][i] = newdata[i]
-        Bank.update()
-    def delete_user():
+                newdata["pin"] = str(user[0]["pin"])
+
+            newdata["pin"] = int(newdata["pin"])
+            newdata["number"] = int(newdata["number"])
+
+            # FIX 4: this loop and the save call were indented to run
+            # unconditionally, even when no account was found (which would
+            # crash on `user[0]` with an empty list). Moved inside `else`,
+            # so it only runs once we know `user` has a match.
+            for i in user[0]:
+                if i in newdata:
+                    user[0][i] = newdata[i]
+
+            # FIX 5: `Bank.update()` doesn't exist — the real method is
+            # name-mangled to `Bank.__update()` because of the double
+            # leading underscore. Written here (inside the class), Python
+            # resolves `Bank.__update()` to the correct method automatically.
+            Bank.__update()
+
+    # FIX 1 (again): added `self` for the same reason as update_details.
+    def delete_user(self):
         acc_no = input("Tell your account number :- ")
         pin = int(input("Tell your pin :- "))
         user = [i for i in Bank.data if i["pin"] == pin and i["accountno."] == acc_no]
 
-        if user == False:
+        # FIX 2 (again): same `not user` fix as above.
+        if not user:
             print("Invalid number ot pin")
         else:
             print("Are you sure? ")
             check = input("Press (Y) or (N) ")
             if check == "Y" or check == "y":
-                index = Bank.data.index(user)
+                # FIX 6: `user` is a list like [{...}], not the dict itself,
+                # so Bank.data.index(user) would never find a match and
+                # raises ValueError. Use user[0], the actual matching record.
+                index = Bank.data.index(user[0])
                 Bank.data.pop(index)
                 Bank.__update()
             else:
-                print("Ok")            
+                print("Ok")
+
+
 bank = Bank()
 
 print("Press 01 for Creating an Account")
@@ -172,7 +201,11 @@ if check == 3:
 
 if check == 4:
     bank.check_details()
+
 if check == 5:
     bank.update_details()
+
 if check == 6:
-    bank.deleteuser()
+    # FIX 7: this called `bank.deleteuser()` (no underscore) — a method
+    # that doesn't exist. The real method is `delete_user`.
+    bank.delete_user()
