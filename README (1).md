@@ -19,7 +19,7 @@ Think of it as a fully working simulation: the code quality is real, the
 
 ## Live demo
 
-`<add your Streamlit Cloud URL here>`
+https://bankmanagementsystem12.streamlit.app/
 
 ## Features
 
