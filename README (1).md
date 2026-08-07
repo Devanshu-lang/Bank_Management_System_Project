@@ -1,5 +1,15 @@
 # Legacy Bank — Premium Digital Banking Suite
 
+<img width="1229" height="398" alt="image" src="https://github.com/user-attachments/assets/d6458c15-1c41-4ff2-8712-10c77218acd0" />
+<img width="1061" height="393" alt="image" src="https://github.com/user-attachments/assets/92622ab3-99f4-472b-8b31-f01f68ea9797" />
+<img width="1241" height="409" alt="image" src="https://github.com/user-attachments/assets/44b3c6cb-e42a-48a5-b824-051b077e5fd4" />
+<img width="1236" height="362" alt="image" src="https://github.com/user-attachments/assets/eddf9c98-def4-4f77-bee2-9acb5da2be7d" />
+<img width="1234" height="419" alt="image" src="https://github.com/user-attachments/assets/bb708343-bb25-4ee7-9ee3-1815aecf8724" />
+<img width="1256" height="310" alt="image" src="https://github.com/user-attachments/assets/6d4fb071-f563-48dd-8cf6-5f929f8856a5" />
+<img width="1245" height="415" alt="image" src="https://github.com/user-attachments/assets/528ea2d9-95dc-4aa9-983a-b46cf6c304a8" />
+
+
+
 A dark-luxury Streamlit banking simulator: sign up, sign in, deposit,
 withdraw, transfer funds between accounts, and view a full transaction
 history — all wrapped in a CRED/Revolut-style glassmorphism UI.
